@@ -64,11 +64,21 @@ export class ScoreGame extends LitElement {
   }
 
   static get properties() {
-    return {};
+    return {
+      player1 : {
+        type: Number
+      },
+      player2 : {
+        type: Number
+      },
+
+    };
   }
 
   constructor() {
     super();
+    this.player1 = 0;
+    this.player2 = 0;
   }
 
   render() {
@@ -78,7 +88,7 @@ export class ScoreGame extends LitElement {
           <h1>P1</h1>
         </div>
         <div class='score'>
-          0
+          ${this.player1}
         </div>
       </div>
 
@@ -87,7 +97,7 @@ export class ScoreGame extends LitElement {
           <h1>P2</h1>
         </div>
         <div class='score'>
-          0
+          ${this.player2}
         </div>
       </div>
     `;

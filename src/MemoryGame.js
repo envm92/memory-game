@@ -36,10 +36,6 @@ export class MemoryGame extends LitElement {
     return {};
   }
 
-  constructor() {
-    super();
-  }
-
   render() {
     return html`
       <score-game></score-game>

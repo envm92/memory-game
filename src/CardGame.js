@@ -45,7 +45,16 @@ export class CardGame extends LitElement {
   }
 
   static get properties() {
-    return {};
+    return {
+      symbol: {
+        type: String
+      }
+    };
+  }
+
+  constructor() {
+    super();
+    this.symbol = '🐲';
   }
 
   render() {
@@ -54,7 +63,7 @@ export class CardGame extends LitElement {
         <div id='card-inner'>
           <div id='card-front'></div>
           <div id='card-back'>
-            🐲
+            ${this.symbol}
           </div>
         </div>
       </div>
