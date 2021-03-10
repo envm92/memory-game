@@ -33,43 +33,31 @@ export class MemoryGame extends LitElement {
   }
 
   static get properties() {
-    return {};
+    return {
+      deck: {
+        type: Array,
+        value: new Array(30)
+      }
+    };
+  }
+
+  constructor() {
+    super();
+    this.deck = [
+      '🌟', '🍒', '🍭', '🍰', '🍓',
+      '🎨', '🚗', '🎀', '💖', '☠️',
+      '👾', '🐶', '👻', '👑', '🙂',
+    ];
   }
 
   render() {
     return html`
       <score-game></score-game>
       <div class='board'>
-        <card-game></card-game>
-        <card-game></card-game>
-        <card-game></card-game>
-        <card-game></card-game>
-        <card-game></card-game>
-        <card-game></card-game>
-        <card-game></card-game>
-        <card-game></card-game>
-        <card-game></card-game>
-        <card-game></card-game>
-        <card-game></card-game>
-        <card-game></card-game>
-        <card-game></card-game>
-        <card-game></card-game>
-        <card-game></card-game>
-        <card-game></card-game>
-        <card-game></card-game>
-        <card-game></card-game>
-        <card-game></card-game>
-        <card-game></card-game>
-        <card-game></card-game>
-        <card-game></card-game>
-        <card-game></card-game>
-        <card-game></card-game>
-        <card-game></card-game>
-        <card-game></card-game>
-        <card-game></card-game>
-        <card-game></card-game>
-        <card-game></card-game>
-        <card-game></card-game>
+        ${this.deck.map((value) => html`
+          <card-game symbol='${value}'></card-game>
+          <card-game symbol='${value}'></card-game>
+        `)}
       </div>
     `;
   }
