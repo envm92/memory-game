@@ -19,7 +19,8 @@ export class CardGame extends LitElement {
         transition: transform 0.6s;
         transform-style: preserve-3d;
       }
-      #card-front, #card-back {
+      #card-front,
+      #card-back {
         position: absolute;
         width: 90%;
         height: 90%;
@@ -30,8 +31,18 @@ export class CardGame extends LitElement {
         border-radius: 30px;
       }
       #card-front {
-        background: -webkit-gradient(linear, left top, right top, from(var(--color-p1)), to( var(--color-scondary-p1)));
-        background: linear-gradient(to right, var(--color-p1), var(--color-scondary-p1));
+        background: -webkit-gradient(
+          linear,
+          left top,
+          right top,
+          from(var(--color-p1)),
+          to(var(--color-scondary-p1))
+        );
+        background: linear-gradient(
+          to right,
+          var(--color-p1),
+          var(--color-scondary-p1)
+        );
       }
       #card-back {
         background-color: var(--color-scondary-p2);
@@ -42,7 +53,7 @@ export class CardGame extends LitElement {
         font-size: 65px;
       }
 
-       .open {
+      .open {
         transform: rotateY(180deg);
       }
     `;
@@ -51,14 +62,14 @@ export class CardGame extends LitElement {
   static get properties() {
     return {
       symbol: {
-        type: String
+        type: String,
       },
-      open : {
-        type: Boolean
+      open: {
+        type: Boolean,
       },
       played: {
-        type: Boolean
-      }
+        type: Boolean,
+      },
     };
   }
 
@@ -70,21 +81,12 @@ export class CardGame extends LitElement {
   }
 
   firstUpdated() {
-    this.addEventListener('click', () => {
-      if (!this.open) {
-        this.open = true;
-        const event = new CustomEvent('card-open', {
-          detail: {
-            symbol: this.symbol
-          }
-        });
-        this.dispatchEvent(event);
-      }
+    this.addEventListener('open', () => {
+      this.open = true;
     });
     this.addEventListener('close', () => {
       this.open = false;
     });
-
     this.addEventListener('played', () => {
       this.played = true;
     });
@@ -92,12 +94,10 @@ export class CardGame extends LitElement {
 
   render() {
     return html`
-      <div id='card' class='${ this.played ? 'played': ''}'>
-        <div id='card-inner' class='${ this.open ? 'open': ''}'>
-          <div id='card-front'></div>
-          <div id='card-back'>
-            ${this.symbol}
-          </div>
+      <div id="card" class="${this.played ? 'played' : ''}">
+        <div id="card-inner" class="${this.open ? 'open' : ''}">
+          <div id="card-front"></div>
+          <div id="card-back">${this.symbol}</div>
         </div>
       </div>
     `;

@@ -6,10 +6,10 @@ export class MemoryGame extends LitElement {
       :host {
         display: block;
         font-family: Futura, sans-serif;
-        --color-p1: #C848B9;
+        --color-p1: #c848b9;
         --color-scondary-p1: #f962a7;
         --color-p2: #ffba69;
-        --color-scondary-p2: #FD836D;
+        --color-scondary-p2: #fd836d;
       }
 
       .board {
@@ -36,36 +36,45 @@ export class MemoryGame extends LitElement {
     return {
       deck: {
         type: Array,
-        value: []
+        value: [],
       },
       turn: {
-        type: Number
+        type: Number,
       },
       isOver: {
-        type: Boolean
+        type: Boolean,
       },
-      score1: {
-        type: Number
-      },
-      score2: {
-        type: Number
+      score: {
+        type: Object,
       },
       opened: {
-        type: Array
+        type: Array,
       },
       canMove: {
-        type: Boolean
-      }
+        type: Boolean,
+      },
     };
   }
 
   __shuffleCards() {
     const emojiCatalog = [
-      '🌟', '🍒', '🍭', '🍰', '🍓',
-      '🎨', '🚗', '🎀', '💖', '☠️',
-      '👾', '🐶', '👻', '👑', '🙂'
+      '🌟',
+      '🍒',
+      '🍭',
+      '🍰',
+      '🍓',
+      '🎨',
+      '🚗',
+      '🎀',
+      '💖',
+      '☠️',
+      '👾',
+      '🐶',
+      '👻',
+      '👑',
+      '🙂',
     ];
-    const getRandom = (to) => {
+    const getRandom = to => {
       const min = Math.ceil(0);
       const max = Math.floor(to);
       return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -78,7 +87,7 @@ export class MemoryGame extends LitElement {
     const stack1 = [...newPairs[0]];
     const stack2 = [...newPairs[1]];
     const deckAux = [];
-    while (stack1.length > 0 || stack2.length  > 0 ) {
+    while (stack1.length > 0 || stack2.length > 0) {
       const random1 = getRandom(29);
       const random2 = getRandom(29);
       if (!deckAux[random1]) {
@@ -89,9 +98,9 @@ export class MemoryGame extends LitElement {
       }
     }
     this.deck = deckAux.map(x => ({
-        value: x,
-        isOpen: false
-      }));
+      value: x,
+      isOpen: false,
+    }));
   }
 
   _initGame() {
@@ -99,39 +108,46 @@ export class MemoryGame extends LitElement {
     this.turn = 1;
     this.isOver = false;
     this.canMove = true;
-    this.score1 = 0;
-    this.score2 = 0;
+    this.score = { 1: 0, 2: 0 };
     this.opened = [];
   }
 
   __clearCards(event) {
-    setTimeout(() => {
-      this.opened[0].target.dispatchEvent(new Event(event));
-      this.opened[1].target.dispatchEvent(new Event(event));
-      this.opened = [];
-      this.canMove = true;
-    },1500);
+    return new Promise(res => {
+      setTimeout(() => {
+        this.opened[0].target.dispatchEvent(new Event(event));
+        this.opened[1].target.dispatchEvent(new Event(event));
+        this.opened = [];
+        this.canMove = true;
+        res();
+      }, 1500);
+    });
   }
 
   _validPlay() {
     this.canMove = false;
     if (this.opened[0].symbol === this.opened[1].symbol) {
-      this[`score${this.turn}`] += 1;
-      this.__clearCards('played');
+      this.__clearCards('played').then(() => {
+        const audio = new Audio(
+          'http://codeskulptor-demos.commondatastorage.googleapis.com/descent/gotitem.mp3'
+        );
+        audio.play();
+        this.score[this.turn] += 1;
+        this.requestUpdate();
+      });
     } else {
-      this.__clearCards('close');
-      this.turn = this.turn === 1 ? 2 : 1;
-    }
-    if ((this.score1 + this.score2) === 15) {
-      alert('FIN DEL JUEGO');
+      this.__clearCards('close').then(() => {
+        this.turn = this.turn === 1 ? 2 : 1;
+      });
     }
   }
 
   _openCard(e) {
     if (this.opened.length >= 0 && this.opened.length <= 2 && this.canMove) {
+      e.target.dispatchEvent(new Event('open'));
       this.opened.push({
-        symbol: e.detail.symbol,
-        target: e.target
+        symbol: e.target.symbol,
+        target: e.target,
       });
       if (this.opened.length === 2) {
         this._validPlay();
@@ -146,11 +162,19 @@ export class MemoryGame extends LitElement {
 
   render() {
     return html`
-      <score-game turn='${this.turn}' player1='${this.score1}' player2='${this.score2}'></score-game>
-      <div class='board'>
-        ${this.deck.map((card) => html`
-          <card-game symbol='${card.value}' @card-open='${this._openCard}'></card-game>
-        `)}
+      <score-game turn="${this.turn}">
+        <span slot="player1">${this.score[1]}</span>
+        <span slot="player2">${this.score[2]}</span>
+      </score-game>
+      <div class="board">
+        ${this.deck.map(
+          card => html`
+            <card-game
+              symbol="${card.value}"
+              @click="${this._openCard}"
+            ></card-game>
+          `
+        )}
       </div>
     `;
   }

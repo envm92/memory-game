@@ -20,12 +20,13 @@ export class ScoreGame extends LitElement {
       }
 
       .container.active {
-        box-shadow: 10px 10px 31px -11px rgba(230,135,135,0.65);
-        -webkit-box-shadow: 10px 10px 31px -11px rgba(230,135,135,0.65);
-        -moz-box-shadow: 10px 10px 31px -11px rgba(230,135,135,0.65);
+        box-shadow: 10px 10px 31px -11px rgba(230, 135, 135, 0.65);
+        -webkit-box-shadow: 10px 10px 31px -11px rgba(230, 135, 135, 0.65);
+        -moz-box-shadow: 10px 10px 31px -11px rgba(230, 135, 135, 0.65);
       }
 
-      .score, .player-tag {
+      .score,
+      .player-tag {
         display: flex;
         justify-content: center;
         align-items: center;
@@ -43,26 +44,28 @@ export class ScoreGame extends LitElement {
       .score {
         border: 5px white;
         border-style: solid;
-        font-size: 40px;
-        font-weight: bolder;
         border-radius: 0 30px 30px 0;
       }
       .container {
         background: gray;
       }
-      .player-1.active .player-tag{
+      .player-1.active .player-tag {
         background: var(--color-p1);
       }
-      .player-1.active .score{
+      .player-1.active .score {
         background: var(--color-scondary-p1);
       }
-      .player-2.active .player-tag{
+      .player-2.active .player-tag {
         background: var(--color-p2);
       }
-      .player-2.active .score{
+      .player-2.active .score {
         background: var(--color-scondary-p2);
       }
-
+      ::slotted(span) {
+        color: #fafafa;
+        font-size: 40px;
+        font-weight: bolder;
+      }
       h1 {
         margin: 0;
       }
@@ -72,41 +75,41 @@ export class ScoreGame extends LitElement {
   static get properties() {
     return {
       turn: {
-        type: Number
+        type: Number,
+        reflect: true,
       },
-      player1: {
-        type: Number
-      },
-      player2: {
-        type: Number
-      }
     };
   }
 
   constructor() {
     super();
     this.turn = 1;
-    this.score = [0,0];
+  }
+
+  attributeChangedCallback(name, oldVal, newVal) {
+    if (name === 'turn' && oldVal !== null) {
+      const audio = new Audio(
+        'http://codeskulptor-demos.commondatastorage.googleapis.com/pang/pop.mp3'
+      );
+      audio.play();
+    }
+    super.attributeChangedCallback(name, oldVal, newVal);
   }
 
   render() {
     return html`
-      <div class='container player-1 ${this.turn === 1 ? 'active' :''}'>
-        <div class='player-tag'>
+      <div class="container player-1 ${this.turn === 1 ? 'active' : ''}">
+        <div class="player-tag">
           <h1>P1</h1>
         </div>
-        <div class='score'>
-          ${this.player1}
-        </div>
+        <div class="score"><slot name="player1"></slot></div>
       </div>
 
-      <div class='container player-2 ${this.turn === 2 ? 'active' :''}'>
-        <div class='player-tag'>
+      <div class="container player-2 ${this.turn === 2 ? 'active' : ''}">
+        <div class="player-tag">
           <h1>P2</h1>
         </div>
-        <div class='score'>
-          ${this.player2}
-        </div>
+        <div class="score"><slot name="player2"></slot></div>
       </div>
     `;
   }
