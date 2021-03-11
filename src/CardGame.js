@@ -16,9 +16,6 @@ export class CardGame extends LitElement {
         transition: transform 0.6s;
         transform-style: preserve-3d;
       }
-      #card:hover #card-inner {
-        transform: rotateY(180deg);
-      }
       #card-front, #card-back {
         position: absolute;
         width: 90%;
@@ -39,7 +36,11 @@ export class CardGame extends LitElement {
         display: flex;
         justify-content: center;
         align-items: center;
-        font-size:50px;
+        font-size: 65px;
+      }
+
+       .open {
+        transform: rotateY(180deg);
       }
     `;
   }
@@ -48,6 +49,9 @@ export class CardGame extends LitElement {
     return {
       symbol: {
         type: String
+      },
+      open : {
+        type: Boolean
       }
     };
   }
@@ -55,12 +59,17 @@ export class CardGame extends LitElement {
   constructor() {
     super();
     this.symbol = '🐲';
+    this.open = false;
+  }
+
+  __onClick() {
+    this.open = true;
   }
 
   render() {
     return html`
-      <div id='card'>
-        <div id='card-inner'>
+      <div id='card' @click='${this.__onClick}'>
+        <div id='card-inner' class='${ this.open ? 'open': ''}'>
           <div id='card-front'></div>
           <div id='card-back'>
             ${this.symbol}
