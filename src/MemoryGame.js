@@ -1,4 +1,4 @@
-import { html, css, LitElement } from 'lit-element';
+import { css, html, LitElement } from 'lit-element';
 
 export class MemoryGame extends LitElement {
   static get styles() {
@@ -37,6 +37,24 @@ export class MemoryGame extends LitElement {
       deck: {
         type: Array,
         value: []
+      },
+      turn: {
+        type: Number
+      },
+      isOver: {
+        type: Boolean
+      },
+      score1: {
+        type: Number
+      },
+      score2: {
+        type: Number
+      },
+      opened: {
+        type: Array
+      },
+      canMove: {
+        type: Boolean
       }
     };
   }
@@ -70,21 +88,55 @@ export class MemoryGame extends LitElement {
         deckAux[random2] = stack2.pop();
       }
     }
-    this.deck = deckAux.map(x => {
-      return { value: x, isOpen: false };
-    });
+    this.deck = deckAux.map(x => ({
+        value: x,
+        isOpen: false
+      }));
   }
 
   _initGame() {
     this.__shuffleCards();
+    this.turn = 1;
+    this.isOver = false;
+    this.canMove = true;
+    this.score1 = 0;
+    this.score2 = 0;
+    this.opened = [];
   }
 
-  _updateScore() {
-
+  __clearCards(event) {
+    setTimeout(() => {
+      this.opened[0].target.dispatchEvent(new Event(event));
+      this.opened[1].target.dispatchEvent(new Event(event));
+      this.opened = [];
+      this.canMove = true;
+    },1500);
   }
 
-  openCard(e) {
+  _validPlay() {
+    this.canMove = false;
+    if (this.opened[0].symbol === this.opened[1].symbol) {
+      this[`score${this.turn}`] += 1;
+      this.__clearCards('played');
+    } else {
+      this.__clearCards('close');
+      this.turn = this.turn === 1 ? 2 : 1;
+    }
+    if ((this.score1 + this.score2) === 15) {
+      alert('FIN DEL JUEGO');
+    }
+  }
 
+  _openCard(e) {
+    if (this.opened.length >= 0 && this.opened.length <= 2 && this.canMove) {
+      this.opened.push({
+        symbol: e.detail.symbol,
+        target: e.target
+      });
+      if (this.opened.length === 2) {
+        this._validPlay();
+      }
+    }
   }
 
   constructor() {
@@ -94,10 +146,10 @@ export class MemoryGame extends LitElement {
 
   render() {
     return html`
-      <score-game></score-game>
+      <score-game turn='${this.turn}' player1='${this.score1}' player2='${this.score2}'></score-game>
       <div class='board'>
         ${this.deck.map((card) => html`
-          <card-game symbol='${card.value}' is-open></card-game>
+          <card-game symbol='${card.value}' @card-open='${this._openCard}'></card-game>
         `)}
       </div>
     `;

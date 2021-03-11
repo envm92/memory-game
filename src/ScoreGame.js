@@ -17,6 +17,9 @@ export class ScoreGame extends LitElement {
         height: 80px;
         color: #fafafa;
         border-radius: 30px;
+      }
+
+      .container.active {
         box-shadow: 10px 10px 31px -11px rgba(230,135,135,0.65);
         -webkit-box-shadow: 10px 10px 31px -11px rgba(230,135,135,0.65);
         -moz-box-shadow: 10px 10px 31px -11px rgba(230,135,135,0.65);
@@ -44,16 +47,19 @@ export class ScoreGame extends LitElement {
         font-weight: bolder;
         border-radius: 0 30px 30px 0;
       }
-      .player-1 .player-tag{
+      .container {
+        background: gray;
+      }
+      .player-1.active .player-tag{
         background: var(--color-p1);
       }
-      .player-1 .score{
+      .player-1.active .score{
         background: var(--color-scondary-p1);
       }
-      .player-2 .player-tag{
+      .player-2.active .player-tag{
         background: var(--color-p2);
       }
-      .player-2 .score{
+      .player-2.active .score{
         background: var(--color-scondary-p2);
       }
 
@@ -65,25 +71,27 @@ export class ScoreGame extends LitElement {
 
   static get properties() {
     return {
-      player1 : {
+      turn: {
         type: Number
       },
-      player2 : {
+      player1: {
         type: Number
       },
-
+      player2: {
+        type: Number
+      }
     };
   }
 
   constructor() {
     super();
-    this.player1 = 0;
-    this.player2 = 0;
+    this.turn = 1;
+    this.score = [0,0];
   }
 
   render() {
     return html`
-      <div class='container player-1'>
+      <div class='container player-1 ${this.turn === 1 ? 'active' :''}'>
         <div class='player-tag'>
           <h1>P1</h1>
         </div>
@@ -92,7 +100,7 @@ export class ScoreGame extends LitElement {
         </div>
       </div>
 
-      <div class='container player-2'>
+      <div class='container player-2 ${this.turn === 2 ? 'active' :''}'>
         <div class='player-tag'>
           <h1>P2</h1>
         </div>

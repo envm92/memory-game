@@ -9,6 +9,9 @@ export class CardGame extends LitElement {
         height: 100px;
         perspective: 1000px;
       }
+      #card.played {
+        display: none;
+      }
       #card-inner {
         position: relative;
         width: 100%;
@@ -52,6 +55,9 @@ export class CardGame extends LitElement {
       },
       open : {
         type: Boolean
+      },
+      played: {
+        type: Boolean
       }
     };
   }
@@ -60,15 +66,33 @@ export class CardGame extends LitElement {
     super();
     this.symbol = '🐲';
     this.open = false;
+    this.played = false;
   }
 
-  __onClick() {
-    this.open = true;
+  firstUpdated() {
+    this.addEventListener('click', () => {
+      if (!this.open) {
+        this.open = true;
+        const event = new CustomEvent('card-open', {
+          detail: {
+            symbol: this.symbol
+          }
+        });
+        this.dispatchEvent(event);
+      }
+    });
+    this.addEventListener('close', () => {
+      this.open = false;
+    });
+
+    this.addEventListener('played', () => {
+      this.played = true;
+    });
   }
 
   render() {
     return html`
-      <div id='card' @click='${this.__onClick}'>
+      <div id='card' class='${ this.played ? 'played': ''}'>
         <div id='card-inner' class='${ this.open ? 'open': ''}'>
           <div id='card-front'></div>
           <div id='card-back'>
