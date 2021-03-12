@@ -65,7 +65,6 @@ export class ScoreGame extends LitElement {
         color: #fafafa;
         font-size: 30px;
         font-weight: bolder;
-
       }
       h1 {
         margin: 0;
@@ -101,14 +100,14 @@ export class ScoreGame extends LitElement {
     return html`
       <div class="container player-1 ${this.turn === 1 ? 'active' : ''}">
         <div class="player-tag">
-          <h1><slot name='name-player1'>P1</slot></h1>
+          <h1><slot name="name-player1">P1</slot></h1>
         </div>
         <div class="score"><slot name="player1"></slot></div>
       </div>
 
       <div class="container player-2 ${this.turn === 2 ? 'active' : ''}">
         <div class="player-tag">
-          <h1><slot name='name-player2'>P1</slot></h1>
+          <h1><slot name="name-player2">P1</slot></h1>
         </div>
         <div class="score"><slot name="player2"></slot></div>
       </div>
