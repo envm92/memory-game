@@ -9,21 +9,44 @@
   </style>
 </head>
 <body>
+
   <div id="demo"></div>
+  <select name="game-difficulty" id="difficulty-select">
+    <option value="0">Easy</option>
+    <option value="1">Medium</option>
+    <option value="2">Hard</option>
+  </select>
 
   <script type="module">
     import { html, render } from 'lit-html';
     import '../memory-game.js';
 
-    const title = 'Hello owc World!';
-    render(
-      html`
-        <memory-game .title=${title}>
-          some more light-dom
+    const name1 = 'Eri';
+    const name2 = 'Ale';
+    let difficulty = 0;
+
+
+    const startGame = () => {
+      render(
+        html`
+        <memory-game
+          player-1=${name1}
+          player-2=${name2}
+          game-difficulty="${difficulty}"
+        >
         </memory-game>
       `,
-      document.querySelector('#demo')
-    );
+        document.querySelector('#demo')
+      );
+    };
+
+    const select = document.getElementById('difficulty-select');
+    const onSelectDifficultyChange = (e) => {
+      difficulty = e.target.value;
+      startGame();
+    };
+    select.addEventListener('change', onSelectDifficultyChange);
+    startGame();
   </script>
 </body>
 </html>

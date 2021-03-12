@@ -36,27 +36,68 @@ export class MemoryGame extends LitElement {
     return {
       deck: {
         type: Array,
-        value: [],
+        value: []
       },
       turn: {
-        type: Number,
+        type: Number
       },
       isOver: {
-        type: Boolean,
+        type: Boolean
       },
       score: {
-        type: Object,
+        type: Object
       },
       opened: {
-        type: Array,
+        type: Array
       },
       canMove: {
-        type: Boolean,
+        type: Boolean
       },
+      gameDifficulty: {
+        attribute: 'game-difficulty',
+        type: Number,
+        converter: {
+          fromAttribute: (value) => {
+            const difficulty = ['easy','medium','hard'];
+            return difficulty[value];
+          },
+          toAttribute: (value) => {
+            const difficulty = ['easy','medium','hard'];
+            return  difficulty.indexOf(value);
+          }
+        }
+      },
+      namePlayer1: {
+        attribute: 'player-1',
+        type: String,
+        reflect: true,
+        converter (value) {
+          if (value !== undefined && typeof value === 'string') {
+            return value.toUpperCase().substr(0,2);
+          }
+          return '';
+        }
+      },
+      namePlayer2: {
+        attribute: 'player-2',
+        type: String,
+        reflect: true,
+        converter (value) {
+          if (value !== undefined && typeof value === 'string') {
+            return value.toUpperCase().substr(0,2);
+          }
+          return '';
+        }
+      }
     };
   }
 
   __shuffleCards() {
+    const difficulty = {
+      'easy': 5,
+      'medium': 9,
+      'hard': 15
+    };
     const emojiCatalog = [
       '🌟',
       '🍒',
@@ -72,24 +113,32 @@ export class MemoryGame extends LitElement {
       '🐶',
       '👻',
       '👑',
-      '🙂',
+      '🙂'
     ];
     const getRandom = to => {
       const min = Math.ceil(0);
       const max = Math.floor(to);
       return Math.floor(Math.random() * (max - min + 1)) + min;
     };
+    const length = difficulty[this.gameDifficulty];
+    let emojisToDisplay = new Set();
+    while (emojisToDisplay.size < length) {
+      emojisToDisplay.add(emojiCatalog[getRandom(length - 1)]);
+    }
+    emojisToDisplay = [...emojisToDisplay];
+
     const newPairs = [new Set(), new Set()];
-    while (newPairs[0].size < 15 || newPairs[1].size < 15) {
-      newPairs[0].add(emojiCatalog[getRandom(14)]);
-      newPairs[1].add(emojiCatalog[getRandom(14)]);
+    while (newPairs[0].size < emojisToDisplay.length || newPairs[1].size < emojisToDisplay.length) {
+      newPairs[0].add(emojisToDisplay[getRandom(emojisToDisplay.length - 1)]);
+      newPairs[1].add(emojisToDisplay[getRandom(emojisToDisplay.length - 1)]);
     }
     const stack1 = [...newPairs[0]];
     const stack2 = [...newPairs[1]];
     const deckAux = [];
+    const sizeDeck = (emojisToDisplay.length * 2) - 1;
     while (stack1.length > 0 || stack2.length > 0) {
-      const random1 = getRandom(29);
-      const random2 = getRandom(29);
+      const random1 = getRandom(sizeDeck);
+      const random2 = getRandom(sizeDeck);
       if (!deckAux[random1]) {
         deckAux[random1] = stack1.pop();
       }
@@ -99,7 +148,7 @@ export class MemoryGame extends LitElement {
     }
     this.deck = deckAux.map(x => ({
       value: x,
-      isOpen: false,
+      isOpen: false
     }));
   }
 
@@ -147,7 +196,7 @@ export class MemoryGame extends LitElement {
       e.target.dispatchEvent(new Event('open'));
       this.opened.push({
         symbol: e.target.symbol,
-        target: e.target,
+        target: e.target
       });
       if (this.opened.length === 2) {
         this._validPlay();
@@ -158,20 +207,29 @@ export class MemoryGame extends LitElement {
   constructor() {
     super();
     this._initGame();
+    this.gameDifficulty = 0;
+  }
+
+  updated(changedProperties) {
+    if (changedProperties.has('gameDifficulty')) {
+      this._initGame();
+    }
   }
 
   render() {
     return html`
-      <score-game turn="${this.turn}">
-        <span slot="player1">${this.score[1]}</span>
-        <span slot="player2">${this.score[2]}</span>
+      <score-game turn='${this.turn}'>
+        <span slot='name-player1'>${this.namePlayer1}</span>
+        <span slot='name-player2'>${this.namePlayer2}</span>
+        <span slot='player1'>${this.score[1]}</span>
+        <span slot='player2'>${this.score[2]}</span>
       </score-game>
-      <div class="board">
+      <div class='board'>
         ${this.deck.map(
           card => html`
             <card-game
-              symbol="${card.value}"
-              @click="${this._openCard}"
+              symbol='${card.value}'
+              @click='${this._openCard}'
             ></card-game>
           `
         )}
