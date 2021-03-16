@@ -1,6 +1,6 @@
 {
-  "name": "memory-game",
-  "version": "0.0.0",
+  "name": "envm92-memory-game",
+  "version": "0.0.1",
   "description": "Webcomponent memory-game following open-wc recommendations",
   "author": "memory-game",
   "license": "MIT",
